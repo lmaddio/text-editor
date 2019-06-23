@@ -3,7 +3,7 @@ import React from 'react';
 import { EditorContextProvider } from './contexts/Editor.context';
 // Components
 import ControlPanel from './control-panel';
-import FileZone from "./file-zone/FileZone";
+import FetchFileZone from './FetchFileZone';
 import './App.css';
 
 const App = () => (
@@ -15,7 +15,7 @@ const App = () => (
       <div className='editor-container'>
         <EditorContextProvider>
           <ControlPanel />
-          <FileZone />
+          <FetchFileZone />
         </EditorContextProvider>
       </div>
     </main>
