@@ -1,28 +1,25 @@
-import React, {Component} from 'react';
-import './App.css';
-import ControlPanel from "./control-panel/ControlPanel";
+import React from 'react';
+// Context
+import { EditorContextProvider } from './contexts/Editor.context';
+// Components
+import ControlPanel from './control-panel';
 import FileZone from "./file-zone/FileZone";
-import getMockText from './text.service';
+import './App.css';
 
-class App extends Component {
-    getText() {
-        getMockText().then(function (result) {
-            console.log(result);
-        });
-    }
-    render() {
-        return (
-            <div className="App">
-                <header>
-                    <span>Simple Text Editor</span>
-                </header>
-                <main>
-                    <ControlPanel/>
-                    <FileZone/>
-                </main>
-            </div>
-        );
-    }
-}
+const App = () => (
+  <div className='App'>
+    <header>
+      <span>Simple Text Editor</span>
+    </header>
+    <main>
+      <div className='editor-container'>
+        <EditorContextProvider>
+          <ControlPanel />
+          <FileZone />
+        </EditorContextProvider>
+      </div>
+    </main>
+  </div>
+);
 
 export default App;
