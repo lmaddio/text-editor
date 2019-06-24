@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+const AbortController = window.AbortController;
+
 const initialState = {
   fetching: false,
   response: null,
@@ -10,8 +12,12 @@ const initialState = {
 class Fetch extends Component {
   constructor(props) {
     super(props);
-    this.state = initialState;
+    this.state = {
+      ...initialState,
+      fetching: Boolean(props.url),
+    };
     this.notApplyUpdate = false;
+    this.controller = null;
     this.fetch = this.fetch.bind(this);
     this.onSuccess = this.onSuccess.bind(this);
     this.onError = this.onError.bind(this);
@@ -19,13 +25,27 @@ class Fetch extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     const {  fetching, response, error } = this.state;
-    return nextState.fetching !== fetching
+    return nextProps.url !== this.props.url
+      || nextState.fetching !== fetching
       || nextState.response !== response
       || nextState.error !== error;
   }
 
   componentDidMount() {
     this.fetch();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { url } = this.props;
+    const { fetching } = this.state;
+    if (prevProps.url !== url) {
+      if (fetching) {
+        this.controller.abort();
+      }
+      if (url) {
+        this.fetch();
+      }
+    }
   }
 
   componentWillUnmount() {
@@ -57,8 +77,10 @@ class Fetch extends Component {
     // fetch needs an url
     if (service === fetch && !url) return ;
 
+    this.controller = new AbortController();
+
     this.setState({ ...initialState, fetching: true }, () =>
-      service(url, options)
+      service(url, Object.assign({}, options, { signal: this.controller.signal }))
         .then(this.onSuccess)
         .catch(this.onError)
     );
