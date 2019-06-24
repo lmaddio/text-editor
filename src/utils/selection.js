@@ -46,7 +46,10 @@ function applyTagToTextNode(node, offset, selectedText, tagName) {
     newText = textFromNode.substring(offset + selectedText.length);
     nodesToInsert.push(document.createTextNode(newText));
   }
-  return nodesToInsert;
+  return {
+    nodesToInsert,
+    newNodeToInsert: newTag,
+  };
 }
 
 export function applyTag(selection, tagName, topParentNode) {
@@ -55,10 +58,16 @@ export function applyTag(selection, tagName, topParentNode) {
   // Order by offset to prevent left-2-right or right-2-left
   const startOffset = anchorOffset < focusOffset ? anchorOffset : focusOffset;
   const anchorParentNode = anchorNode.parentNode;
+  // sometimes a selection can get inside an element, happened in a project a few months ago, need another workaround for that case
   if (anchorNode.nodeType === Node.TEXT_NODE) {
-    const nodesToInsert = applyTagToTextNode(anchorNode, startOffset, selectedText, tagName);
+    const { newNodeToInsert, nodesToInsert } = applyTagToTextNode(anchorNode, startOffset, selectedText, tagName);
     nodesToInsert.forEach(newNode => anchorParentNode.insertBefore(newNode, anchorNode));
     anchorParentNode.removeChild(anchorNode);
+
+    // Create the new selection
+    window.getSelection().empty();
+    const textInNewNode = newNodeToInsert.firstChild;
+    window.getSelection().setBaseAndExtent(textInNewNode, 0, textInNewNode, selectedText.length);
   }
   return topParentNode.innerHTML;
 }
