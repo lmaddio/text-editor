@@ -1,18 +1,23 @@
 import React from 'react';
 import EditorContext from '../contexts/Editor.context';
+import SuggestionsContext from '../contexts/Suggestions.context';
 import FileZone from './FileZone';
 
 const WORD_SEPARATOR = ' ';
 
-const FileZoneWrapper = ({ setSelection, cleanSelection, setContent, ...props }) => {
+const FileZoneWrapper = ({
+  selection, setSelection, cleanSelection, setContent, setWord, cleanWord, children, ...props
+}) => {
 
   const onMouseUp = () => {
     const selection = window.getSelection();
     const text = selection.toString() || '';
     if (text.trim(WORD_SEPARATOR) && text.split(WORD_SEPARATOR).length === 1) {
       setSelection();
+      setWord(text);
     } else {
       cleanSelection();
+      cleanWord();
     }
   }
 
@@ -29,19 +34,28 @@ const FileZoneWrapper = ({ setSelection, cleanSelection, setContent, ...props })
 }
 
 const FileZoneConsumer = (props) => (
-  <EditorContext.Consumer>
+  <SuggestionsContext.Consumer>
     {
-      ({ setSelection, cleanSelection, setContent, content }) => (
-        <FileZoneWrapper
-          {...props}
-          setSelection={setSelection}
-          cleanSelection={cleanSelection}
-          setContent={setContent}
-          content={content}
-        />
+      ({ setWord, cleanWord }) => (
+        <EditorContext.Consumer>
+          {
+            ({ selection, setSelection, cleanSelection, setContent, content }) => (
+              <FileZoneWrapper
+                {...props}
+                setWord={setWord}
+                cleanWord={cleanWord}
+                cleanSelection={cleanSelection}
+                setContent={setContent}
+                content={content}
+                selection={selection}
+                setSelection={setSelection}
+              />
+            )
+          }
+        </EditorContext.Consumer>
       )
     }
-  </EditorContext.Consumer>
+  </SuggestionsContext.Consumer>
 );
 
 export default FileZoneConsumer;

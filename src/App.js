@@ -1,8 +1,10 @@
 import React from 'react';
 // Context
+import { SuggestionsContextProvider } from './contexts/Suggestions.context';
 import { EditorContextProvider } from './contexts/Editor.context';
 // Components
 import ControlPanel from './control-panel';
+import Suggestions from './suggestions';
 import FetchFileZone from './FetchFileZone';
 import './App.css';
 
@@ -15,7 +17,10 @@ const App = () => (
       <div className='editor-container'>
         <EditorContextProvider>
           <ControlPanel />
-          <FetchFileZone />
+          <SuggestionsContextProvider>
+            <FetchFileZone />
+            <Suggestions />
+          </SuggestionsContextProvider>
         </EditorContextProvider>
       </div>
     </main>
