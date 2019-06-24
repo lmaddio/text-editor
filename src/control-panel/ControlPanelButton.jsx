@@ -18,8 +18,9 @@ class ControlPanelButton extends Component {
 
   onClick(event) {
     event.preventDefault();
-    const { formatTag } = this.props;
-    formatTag(window.getSelection(), this.state.hasStyle);
+    const { formatTag, setContent } = this.props;
+    const newContent = formatTag(window.getSelection(), this.state.hasStyle);
+    setContent(newContent);
   }
 
   render() {

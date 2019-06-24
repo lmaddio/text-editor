@@ -34,7 +34,6 @@ class Fetch extends Component {
 
   async onSuccess(response) {
     let data = null;
-    console.log('onSuccess', response);
     try {
       if (response && response.ok) {
         data = await this.props.onSuccess(response);

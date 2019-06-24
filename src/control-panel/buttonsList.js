@@ -1,11 +1,22 @@
 import React from 'react';
 import { v4 } from 'uuid';
-import { findParentNode, nodeHasTagName } from '../utils/selection';
+import { findParentNode, nodeHasTagName, applyTag } from '../utils/selection';
 
 const PARENT_ID = 'file';
 
 function topParent(node) {
   return node.isSameNode(document.getElementById(PARENT_ID));
+}
+
+function formatMethodByTagName(tagName) {
+  const tag = tagName.toLowerCase();
+  return (selection, hasStyle) => {
+    const topParentNode = document.getElementById(PARENT_ID);
+    if (!hasStyle) {
+      return applyTag(selection, tag, topParentNode);
+    }
+    return topParentNode.innerHTML;
+  }
 }
 
 function checkFormatByTag(tagName) {
@@ -22,21 +33,21 @@ const stylesButtonsArray = [
     id: v4(),
     label: 'B',
     children: React.createElement('b', null, 'B'),
-    formatTag: () => {},
+    formatTag: formatMethodByTagName('b'),
     hasTagStyle: checkFormatByTag('b'),
   },
   {
     id: v4(),
     label: 'I',
     children: React.createElement('i', null, 'I'),
-    formatTag: () => {},
+    formatTag: formatMethodByTagName('i'),
     hasTagStyle: checkFormatByTag('i'),
   },
   {
     id: v4(),
     label: 'U',
     children: React.createElement('u', null, 'U'),
-    formatTag: () => {},
+    formatTag: formatMethodByTagName('u'),
     hasTagStyle: checkFormatByTag('u'),
   }
 ];
