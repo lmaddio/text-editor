@@ -21,6 +21,8 @@ class ControlPanelButton extends Component {
     const { formatTag, setContent } = this.props;
     const newContent = formatTag(window.getSelection(), this.state.hasStyle);
     setContent(newContent);
+    // So can check for the new styles applied
+    this.forceUpdate();
   }
 
   render() {

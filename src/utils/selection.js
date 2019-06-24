@@ -71,3 +71,28 @@ export function applyTag(selection, tagName, topParentNode) {
   }
   return topParentNode.innerHTML;
 }
+
+function isSameNode(nodeA) {
+  return nodeB => nodeA && nodeB && nodeA.isSameNode(nodeB);
+}
+
+export function removeTag(selection, tagName, topParentNode) {
+  const { anchorNode } = selection;
+  const upperCaseTagName = tagName.toUpperCase();
+  const selectedText = selection.toString();
+  const elementWithTag = findParentNode({
+    childNode: anchorNode, validator: nodeHasTagName(upperCaseTagName), topParent: isSameNode(topParentNode)
+  });
+  const parentOfTag = elementWithTag.parentNode;
+  elementWithTag.childNodes.forEach(childNode => {
+    elementWithTag.removeChild(childNode);
+    parentOfTag.insertBefore(childNode, elementWithTag);
+  });
+  parentOfTag.removeChild(elementWithTag);
+
+  // Create the new selection
+  window.getSelection().empty();
+  window.getSelection().setBaseAndExtent(anchorNode, 0, anchorNode, selectedText.length);
+
+  return topParentNode.innerHTML;
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { v4 } from 'uuid';
-import { findParentNode, nodeHasTagName, applyTag } from '../utils/selection';
+import { findParentNode, nodeHasTagName, applyTag, removeTag } from '../utils/selection';
 
 const PARENT_ID = 'file';
 
@@ -15,7 +15,7 @@ function formatMethodByTagName(tagName) {
     if (!hasStyle) {
       return applyTag(selection, tag, topParentNode);
     }
-    return topParentNode.innerHTML;
+    return removeTag(selection, tag, topParentNode);
   }
 }
 
